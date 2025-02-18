@@ -1,0 +1,166 @@
+patch:
+  switches/@0/reset: 1 #表示將 switcher 列表中的第一個元素（即 ascii_mode 開關）的初始值重設爲狀態1（即「英文」）。
+  # "app_options/Claunch.exe/ascii_mode":true"
+  ascii_composer/switch_key/Shift_L: noop
+  speller/algebra/@before 0: derive/eng$/en/
+  speller/algebra/@before 1: derive/ing$/in/
+
+  engine/processors/@before 0: lua_processor@*EnglishSymbols*processor
+  engine/processors/@before 1: lua_processor@*single_char_mode*processor
+  engine/processors/+:
+    - lua_processor@cloud_pinyin_processor
+  engine/translators/+:
+    - lua_translator@cloud_pinyin_translator
+  engine/filters/+:
+    - lua_filter@*single_char_mode*filter
+
+  # "engine/translators/@before 0": lua_translator@*EnglishSymbols*translator
+  # "engine/filters/@before 0": lua_filter@*poptest*filter
+  "radical_reverse_lookup/dictionary": zdict
+  # "punctuator/half_shape/.": { pair: ["「", "」"] }
+  # "key_binder/bindings/+":
+  #   - { when: always, accept: Control+comma, send_sequence: "vesym1" }
+  #   - { when: always, accept: Control+period, send_sequence: "vesym2" }
+  #   - { when: always, accept: Control+Shift+colon, send_sequence: "vesym3" }
+  #   - { when: always, accept: Control+semicolon, send_sequence: "vesym4" }
+  #   - { when: always, accept: Control+Shift+quotedbl, send_sequence: "vesym5" }
+  #   - { when: always, accept: Control+apostrophe, send_sequence: "vesym{Next}1" }
+  #   - { when: always, accept: Control+bracketleft, send_sequence: "vesym{Next}2" }
+  #   - { when: always, accept: Control+bracketright, send_sequence: "vesym{Next}3" }
+  #   - { when: always, accept: Control+Shift+braceleft, send_sequence: "vesym{Next}4" }
+  #   - { when: always, accept: Control+Shift+braceright, send_sequence: "vesym{Next}5" }
+  #   - { when: always, accept: Control+Shift+parenleft, send_sequence: "vesym{Next}{Next}1" }
+  #   - { when: always, accept: Control+Shift+parenright, send_sequence: "vesym{Next}{Next}2" }
+  #   - { when: always, accept: Control+Shift+less, send_sequence: "vesym{Next}{Next}3" }
+  #   - { when: always, accept: Control+Shift+greater, send_sequence: "vesym{Next}{Next}4" }
+  #   - { when: always, accept: Control+Shift+question, send_sequence: "vesym{Next}{Next}5" }
+  #   - { when: always, accept: Control+Shift+exclam, send_sequence: "vesym{Next}{Next}{Next}1" }
+  #   - { when: always, accept: Control+backslash, send_sequence: "vesym{Next}{Next}{Next}2" }
+  #   - { when: always, accept: Control+Shift+dollar, send_sequence: "vesym{Next}{Next}{Next}3" }
+  #   - { when: always, accept: Control+Shift+asciicircum, send_sequence: "vesym{Next}{Next}{Next}4" }
+
+  "punctuator/symbols/+":
+    "vja": [あ, ア]
+    "vjka": [か, カ]
+    "vjsa": [さ, サ]
+    "vjta": [た, タ]
+    "vjna": [な, ナ]
+    "vjha": [は, ハ]
+    "vjma": [ま, マ]
+    "vjya": [や, ヤ]
+    "vjra": [ら, ラ]
+    "vjwa": [わ, ワ]
+
+    "vjga": [が, ガ]
+    "vjza": [ざ, ザ]
+    "vjda": [だ, ダ]
+    "vjba": [ば, バ]
+    "vjpa": [ぱ, パ]
+
+    "vjkya": [きゃ, キャ]
+    "vjsha": [しゃ, シャ]
+    "vjcha": [ちゃ, チャ]
+    "vjnya": [にゃ, ニャ]
+    "vjhya": [ひゃ, ヒャ]
+    "vjmya": [みゃ, ミャ]
+    "vjrya": [りゃ, リャ]
+    "vjgya": [ぎゃ, ギャ]
+    "vjja": [じゃ, ジャ]
+    "vjbya": [びゃ, ビャ]
+    "vjpya": [ぴゃ, ピャ]
+
+    #完成い段假名
+    "vji": [い, イ]
+    "vjki": [き, キ]
+    "vjshi": [し, シ]
+    "vjchi": [ち, チ]
+    "vjni": [に, ニ]
+    "vjhi": [ひ, ヒ]
+    "vjmi": [み, ミ]
+    "vjri": [り, リ]
+
+    "vjgi": [ぎ, ギ]
+    "vjzi": [じ, ジ]
+    "vjdi": [ぢ, ヂ]
+    "vjbi": [び, ビ]
+    "vjpi": [ぴ, ピ]
+
+    #完成う段假名
+    "vju": [う, ウ]
+    "vjku": [く, ク]
+    "vjsu": [す, ス]
+    "vjtsu": [つ, ツ]
+    "vjnu": [ぬ, ヌ]
+    "vjhu": [ふ, フ]
+    "vjmu": [む, ム]
+    "vjyu": [ゆ, ユ]
+    "vjru": [る, ル]
+
+    "vjgu": [ぐ, グ]
+    "vjzu": [ず, ズ]
+    "vjdu": [づ, ヅ]
+    "vjbu": [ぶ, ブ]
+    "vjpu": [ぷ, プ]
+
+    "vjkyu": [きゅ, キュ]
+    "vjshu": [しゅ, シュ]
+    "vjchu": [ちゅ, チュ]
+    "vjnyu": [にゅ, ニュ]
+    "vjhyu": [ひゅ, ヒュ]
+    "vjmyu": [みゅ, ミュ]
+    "vjryu": [りゅ, リュ]
+    "vjgyu": [ぎゅ, ギュ]
+    "vjju": [じゅ, ジュ]
+    "vjbyu": [びゅ, ビュ]
+    "vjpyu": [ぴゅ, ピュ]
+
+    #完成え段假名
+    "vje": [え, エ]
+    "vjke": [け, ケ]
+    "vjse": [せ, セ]
+    "vjte": [て, テ]
+    "vjne": [ね, ネ]
+    "vjhe": [へ, ヘ]
+    "vjme": [め, メ]
+    "vjre": [れ, レ]
+
+    "vjge": [げ, ゲ]
+    "vjze": [ぜ, ゼ]
+    "vjde": [で, デ]
+    "vjbe": [べ, ベ]
+    "vjpe": [ぺ, ペ]
+
+    #完成お段假名
+    "vjo": [お, オ]
+    "vjko": [こ, コ]
+    "vjso": [そ, ソ]
+    "vjto": [と, ト]
+    "vjno": [の, ノ]
+    "vjho": [ほ, ホ]
+    "vjmo": [も, モ]
+    "vjyo": [よ, ヨ]
+    "vjro": [ろ, ロ]
+
+    "vjgo": [ご, ゴ]
+    "vjzo": [ぞ, ゾ]
+    "vjdo": [ど, ド]
+    "vjbo": [ぼ, ボ]
+    "vjpo": [ぽ, ポ]
+
+    "vjkyo": [きょ, キョ]
+    "vjsho": [しょ, ショ]
+    "vjcho": [ちょ, チョ]
+    "vjnyo": [にょ, ニョ]
+    "vjhyo": [ひょ, ヒョ]
+    "vjmyo": [みょ, ミョ]
+    "vjryo": [りょ, リョ]
+    "vjgyo": [ぎょ, ギョ]
+    "vjjo": [じょ, ジョ]
+    "vjbyo": [びょ, ビョ]
+    "vjpyo": [ぴょ, ピョ]
+
+    "vjn": [ん, ン]
+
+
+    # 配合key_binder来输入符号
+    # "vesym": [",", ".", ":", ";", '"', "'", "[", "]", "{", "}", "(", ")", "<", ">", "?", "!", '\',"$","^"]

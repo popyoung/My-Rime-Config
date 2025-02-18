@@ -1,0 +1,25 @@
+﻿patch:
+  switches/@0/reset: 1 #表示將 switcher 列表中的第一個元素（即 ascii_mode 開關）的初始值重設爲狀態1（即「英文」）。
+  # app_options/Claunch.exe/ascii_mode:true
+  ascii_composer/switch_key/Shift_L: noop
+  speller/algebra/@before 0: derive/eng$/en/
+  speller/algebra/@before 1: derive/ing$/in/
+
+  engine/processors/@before 0: lua_processor@*EnglishSymbols*processor
+  engine/processors/@before 1: lua_processor@*single_char_mode*processor
+  engine/processors/+:
+    - lua_processor@cloud_pinyin_processor
+  engine/translators/+:
+    - lua_translator@cloud_pinyin_translator
+  engine/filters/+:
+    - lua_filter@*single_char_mode*filter
+
+  melt_eng/user_dict: en_dicts/user_en # 指定词库文件
+  melt_eng/db_class: tabledb # 不清楚动态词典和静态词典的区别。一开始以为静态用的是数据库，动态用的是txt，才用的动态，好像并不是这样。
+  melt_eng/enable_user_dict: true
+  # engine/processors/+:
+  #   - lua_processor@*cloud_pinyin_mspy*processor
+  # engine/translators/+:
+  #   - lua_filter@*cloud_pinyin_mspy*translator
+
+  # "radical_reverse_lookup/dictionary": zdict
