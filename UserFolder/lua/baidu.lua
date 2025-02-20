@@ -1,4 +1,29 @@
 local json = require("json")
+
+-- 获取当前 Lua 文件的路径
+local function getCurrentLuaFilePath()
+    local info = debug.getinfo(2, "S")
+    if info and info.source then
+        local source = info.source
+        if source:sub(1, 1) == "@" then
+            -- 去掉开头的 @ 符号
+            local fullPath = source:sub(2)
+            -- 查找最后一个路径分隔符的位置
+            local lastSlashIndex = fullPath:match(".*()[/\\]")
+            if lastSlashIndex then
+                -- 截取目录部分
+                return fullPath:sub(1, lastSlashIndex)
+            end
+        end
+    end
+    log.error("Failed to get current Lua file path.")
+end
+
+-- 获取当前 Lua 文件所在的目录路径
+local luaDir = getCurrentLuaFilePath()
+
+package.cpath = package.cpath .. ";" .. luaDir .. "?.dll"
+
 local http = require("simplehttp")
 http.TIMEOUT = 0.5
 
