@@ -38,11 +38,11 @@ function processor.func(key_event, env)
 
     -- print(string.format("key: %s", key_event:repr()))
     if context:is_composing() and key_event:repr() == "Shift+Return" then
-        -- print('get_commit_text: ' .. context:get_commit_text())
-        env.engine:commit_text(context:get_commit_text())
+        --print(string.format('get_commit_text: %s %s %s', context:get_commit_text(), context.input, context:get_selected_candidate().type))
+        env.engine:commit_text(context.input)
         local entry = DictEntry()
-        entry.text = context:get_commit_text()
-        entry.custom_code = string.lower(context:get_commit_text()) .. " "
+        entry.text = context.input
+        entry.custom_code = context.input
         env.memory:start_session()
         local r = env.memory:update_userdict(entry, 1, "")
         env.memory:finish_session()
