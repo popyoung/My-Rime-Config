@@ -6,6 +6,7 @@
   speller/algebra/@before 1: derive/ing$/in/
 
   engine/processors/@before 0: lua_processor@*EnglishSymbols*processor
+  # engine/filter/@before 0: lua_filter@*EnglishSymbols*filter
   engine/processors/@before 1: lua_processor@*single_char_mode*processor
   engine/processors/+:
     - lua_processor@cloud_pinyin_processor
@@ -17,9 +18,11 @@
   melt_eng/user_dict: en_dicts/user_en # 指定词库文件
   melt_eng/db_class: tabledb # 不清楚动态词典和静态词典的区别。一开始以为静态用的是数据库，动态用的是txt，才用的动态，好像并不是这样。
   melt_eng/enable_user_dict: true
-  # engine/processors/+:
-  #   - lua_processor@*cloud_pinyin_mspy*processor
-  # engine/translators/+:
-  #   - lua_filter@*cloud_pinyin_mspy*translator
 
   # "radical_reverse_lookup/dictionary": zdict
+  punctuator/half_shape/:: ':'
+  punctuator/half_shape/[: '['
+  punctuator/half_shape/]: ']'
+  punctuator/half_shape/': ''''
+  punctuator/half_shape/{: '{'
+  punctuator/half_shape/}: '}'

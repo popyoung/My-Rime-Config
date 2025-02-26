@@ -4,14 +4,8 @@ local print = log.error
 local symbolMap = {
     [44] = ',',
     [46] = '.',
-    [58] = ':',
     [59] = ';',
     [34] = '"',
-    [39] = "'",
-    [91] = '[',
-    [93] = ']',
-    [123] = '{',
-    [125] = '}',
     [40] = '(',
     [41] = ')',
     [60] = '<',
@@ -20,6 +14,22 @@ local symbolMap = {
     [33] = '!',
     [92] = '\\'
 }
+
+-- local symbolMap2 = {
+--     [58] = '：',
+--     [91] = '【',
+--     [93] = '】',
+--     [123] = '「',
+--     [125] = '」',
+--     [39] = "‘’",
+-- }
+
+
+local function contains_chinese(str)
+    -- 匹配中文字符的 Unicode 范围
+    return string.match(str, "[\228-\233][\128-\191]") ~= nil
+end
+
 
 local processor = {}
 function processor.func(key_event, env)
@@ -38,7 +48,7 @@ function processor.func(key_event, env)
 
     -- print(string.format("key: %s", key_event:repr()))
     if context:is_composing() and key_event:repr() == "Shift+Return" then
-        --print(string.format('get_commit_text: %s %s %s', context:get_commit_text(), context.input, context:get_selected_candidate().type))
+        -- print(string.format('get_commit_text: %s %s %s', context:get_commit_text(), context.input, context:get_selected_candidate().type))
         env.engine:commit_text(context.input)
         local entry = DictEntry()
         entry.text = context.input
@@ -56,7 +66,15 @@ function processor.func(key_event, env)
     if symbol ~= nil then
         if context:get_commit_text():match("^[a-zA-Z]+$") or (key_event:ctrl() and not key_event:release()) then
             -- if context:get_commit_text():match("^[a-zA-Z]+$") then
+
             env.engine:commit_text(context:get_commit_text() .. symbol)
+            context:clear()
+            return 1
+        end
+    elseif (key_event.keycode == 58) then   -- 冒号特殊处理
+        -- print(string.format("%s %s", context:get_commit_text(), contains_chinese(context:get_commit_text())))
+        if contains_chinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
+            env.engine:commit_text(context:get_commit_text() .. "：")
             context:clear()
             return 1
         end
@@ -110,21 +128,21 @@ function processor.fini(env)
     collectgarbage()
 end
 
-local function popTranslator(input, seg, env)
-    local context = env.engine.context
-    -- print('input:' .. input .. ' seg.status:' .. seg.status .. ' seg.start:' .. seg.start .. ' seg._end:' .. seg._end ..
-    --   ' seg.length:' .. seg.length .. ' seg.selected_index:' .. seg.selected_index)
-    --  if not seg.has_tag('histroy') then
-    --      return
-    --  end
-    -- print(context.commit_history:repr())
-    -- print('commit_history: ' .. context.commit_history:latest_text())
-    if (input == "date") then
-        --- Candidate(type, start, end, text, comment)
-        yield(Candidate("date", seg.start, seg._end, os.date("%Y年%m月%d日"), " 日期"))
-    end
+-- local function popTranslator(input, seg, env)
+--     local context = env.engine.context
+--     -- print('input:' .. input .. ' seg.status:' .. seg.status .. ' seg.start:' .. seg.start .. ' seg._end:' .. seg._end ..
+--     --   ' seg.length:' .. seg.length .. ' seg.selected_index:' .. seg.selected_index)
+--     --  if not seg.has_tag('histroy') then
+--     --      return
+--     --  end
+--     -- print(context.commit_history:repr())
+--     -- print('commit_history: ' .. context.commit_history:latest_text())
+--     if (input == "date") then
+--         --- Candidate(type, start, end, text, comment)
+--         yield(Candidate("date", seg.start, seg._end, os.date("%Y年%m月%d日"), " 日期"))
+--     end
 
-end
+-- end
 
 local function popFilter(translation, env)
     local normal_cands = {}
@@ -141,7 +159,7 @@ local function popFilter(translation, env)
     --     print(commit_record.text)
     -- end
 
-    -- print(10)
+    print(10)
     for cand in translation:iter() do
         -- 符号自动上屏(;[a-z])
         if preedit_code:match("^;%l+$") and not symbol_cands[cand] then
@@ -156,6 +174,13 @@ local function popFilter(translation, env)
         if #normal_cands >= 150 then
             break
         end
+
+        print(cand.text)
+        print(contains_english(cand.text))
+        if contains_english(cand.text) then
+            cand = cand:to_shadow_candidate(cand.type, cand.text .. ' ', cand.comment + 'pop')
+            yield(cand)
+        end
         table.insert(normal_cands, cand)
     end
     -- 符号自动上屏(;[a-z]+)
@@ -166,18 +191,18 @@ local function popFilter(translation, env)
     end
 end
 
-function print_table_simple(t)
+local function print_table_simple(t)
     for k, v in pairs(t) do
         print(k .. " = " .. tostring(v))
     end
 end
 
 return {
-    processor = processor,
-    translator = {
-        func = popTranslator
-    },
-    filter = {
-        func = popFilter
-    }
+    processor = processor
+    -- translator = {
+    --     func = popTranslator
+    -- },
+    -- filter = {
+    --     func = popFilter
+    -- }
 }
