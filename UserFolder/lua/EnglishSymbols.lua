@@ -12,7 +12,8 @@ local symbolMap = {
     [62] = '>',
     [63] = '?',
     [33] = '!',
-    [92] = '\\'
+    [92] = '\\',
+    [32] = ' ',     -- 加上空格
 }
 
 -- local symbolMap2 = {
@@ -25,11 +26,15 @@ local symbolMap = {
 -- }
 
 
-local function contains_chinese(str)
+local function containsChinese(str)
     -- 匹配中文字符的 Unicode 范围
     return string.match(str, "[\228-\233][\128-\191]") ~= nil
 end
 
+local function isEnglish(str)
+    -- 匹配英文字符的 Unicode 范围
+    return string.match(str, "^[a-zA-Z]+$")
+end
 
 local processor = {}
 function processor.func(key_event, env)
@@ -64,7 +69,7 @@ function processor.func(key_event, env)
     local symbol = nil
     symbol = symbolMap[key_event.keycode]
     if symbol ~= nil then
-        if context:get_commit_text():match("^[a-zA-Z]+$") or (key_event:ctrl() and not key_event:release()) then
+        if isEnglish(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
             -- if context:get_commit_text():match("^[a-zA-Z]+$") then
 
             env.engine:commit_text(context:get_commit_text() .. symbol)
@@ -73,7 +78,7 @@ function processor.func(key_event, env)
         end
     elseif (key_event.keycode == 58) then   -- 冒号特殊处理
         -- print(string.format("%s %s", context:get_commit_text(), contains_chinese(context:get_commit_text())))
-        if contains_chinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
+        if containsChinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
             env.engine:commit_text(context:get_commit_text() .. "：")
             context:clear()
             return 1
