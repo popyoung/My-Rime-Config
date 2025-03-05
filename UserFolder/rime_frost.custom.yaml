@@ -1,9 +1,8 @@
 ﻿patch:
   switches/@0/reset: 1 #表示將 switcher 列表中的第一個元素（即 ascii_mode 開關）的初始值重設爲狀態1（即「英文」）。
-  # app_options/Claunch.exe/ascii_mode:true
-  ascii_composer/switch_key/Shift_L: noop
-  speller/algebra/@before 0: derive/eng$/en/
-  speller/algebra/@before 1: derive/ing$/in/
+  ascii_composer/switch_key/Shift_L: noop # 表示將 Shift_L 鍵的功能重設爲「不做任何操作」，即無視 Shift_L 鍵切换中英文功能。
+  speller/algebra/@before 0: derive/eng$/en/ # 模糊音en同时可以代表eng
+  speller/algebra/@before 1: derive/ing$/in/ # 模糊音in同时可以代表ing
 
   engine/processors/@before 0: lua_processor@*EnglishSymbols*processor
   engine/processors/@before 1: lua_processor@*single_char_mode*processor
