@@ -13,6 +13,8 @@ lua文件来自 https://github.com/hchunhui/librime-cloud 和 https://github.com
 
 win下打开用户文件夹以及重新部署都是右键点击输入法状态栏图表，然后选择对应功能。
 
+PS: 小狼毫0.16.3版本记录用户词库的功能无法使用，如需使用，请安装新版（如 Nightly Build https://github.com/rime/weasel/releases）
+
 ## 参考链接
 如需要了解其他基础功能，推荐官网链接、雾凇配置介绍以及lua文档，虽然我这里是基于白霜，但大致用法很接近。
 
