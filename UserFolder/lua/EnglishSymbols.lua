@@ -70,8 +70,7 @@ function processor.func(key_event, env)
     symbol = symbolMap[key_event.keycode]
     if symbol ~= nil then
         if isEnglish(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
-            -- if context:get_commit_text():match("^[a-zA-Z]+$") then
-
+            -- 目前会覆盖云输入后的自动入库，所以云输入后要自动入库还需要使用数字键上屏
             env.engine:commit_text(context:get_commit_text() .. symbol)
             context:clear()
             return 1

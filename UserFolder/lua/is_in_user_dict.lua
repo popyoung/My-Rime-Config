@@ -23,7 +23,7 @@ function M.func(input, env)
         -- if cand.type == "user_table" then
         --     cand.comment = cand.comment .. '⚡️'
         -- end
-
+        -- log.error(cand.text .. " " .. cand.type)
         -- 整句联想，加上𑄗符号
         if cand.type == 'sentence' then
             cand.comment = '∞'

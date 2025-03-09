@@ -13,10 +13,25 @@ patch:
     - lua_translator@cloud_pinyin_translator
   engine/filters/+:
     - lua_filter@*single_char_mode*filter
+  engine/filters/@before 0: lua_filter@*is_in_user_dict # 用户词典的词加上一个*
+
+
+  melt_eng/user_dict: en_dicts/user_en # 指定词库文件
+  melt_eng/db_class: tabledb # 不清楚动态词典和静态词典的区别。一开始以为静态用的是数据库，动态用的是txt，才用的动态，好像并不是这样。
+  melt_eng/enable_user_dict: true
+
+  # "radical_reverse_lookup/dictionary": zdict
+  punctuator/half_shape/:: ':'
+  punctuator/half_shape/[: '['
+  punctuator/half_shape/]: ']'
+  punctuator/half_shape/': ''''
+  punctuator/half_shape/{: '{'
+  punctuator/half_shape/}: '}'
 
   # "engine/translators/@before 0": lua_translator@*EnglishSymbols*translator
   # "engine/filters/@before 0": lua_filter@*poptest*filter
-  "radical_reverse_lookup/dictionary": zdict
+  "radical_reverse_lookup/dictionary": rime_frost
+  # "radical_reverse_lookup/dictionary": zdict
   # "punctuator/half_shape/.": { pair: ["「", "」"] }
   # "key_binder/bindings/+":
   #   - { when: always, accept: Control+comma, send_sequence: "vesym1" }
