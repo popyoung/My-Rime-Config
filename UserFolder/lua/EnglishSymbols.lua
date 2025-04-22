@@ -13,7 +13,7 @@ local symbolMap = {
     [63] = '?',
     [33] = '!',
     [92] = '\\',
-    [32] = ' ',     -- 加上空格
+    -- [32] = ' ',     -- 加上空格
 }
 
 -- local symbolMap2 = {
@@ -75,13 +75,13 @@ function processor.func(key_event, env)
             context:clear()
             return 1
         end
-    elseif (key_event.keycode == 58) then   -- 冒号特殊处理
-        -- print(string.format("%s %s", context:get_commit_text(), contains_chinese(context:get_commit_text())))
-        if containsChinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
-            env.engine:commit_text(context:get_commit_text() .. "：")
-            context:clear()
-            return 1
-        end
+    -- elseif (key_event.keycode == 58) then   -- 冒号特殊处理
+    --     -- print(string.format("%s %s", context:get_commit_text(), contains_chinese(context:get_commit_text())))
+    --     if containsChinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
+    --         env.engine:commit_text(context:get_commit_text() .. "：")
+    --         context:clear()
+    --         return 1
+    --     end
     end
     -- 实现")"的特殊处理
     if key_event:ctrl() and key_event:release() and key_event.keycode == 41 then
