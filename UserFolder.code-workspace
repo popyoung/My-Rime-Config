@@ -7,5 +7,7 @@
 			"path": "C:/Users/popyoung/AppData/Roaming/Rime"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"editor.insertSpaces": false
+	}
 }
