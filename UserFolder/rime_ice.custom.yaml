@@ -5,6 +5,7 @@ patch:
   speller/algebra/@before 0: derive/eng$/en/
   speller/algebra/@before 1: derive/ing$/in/
 
+  # engine/translators/@before 0: lua_translator@*EnglishSymbols*translator
   engine/processors/@before 0: lua_processor@*EnglishSymbols*processor
   engine/processors/@before 1: lua_processor@*single_char_mode*processor
   engine/processors/+:

@@ -38,15 +38,32 @@ local function isEnglish(str)
 end
 
 local processor = {}
+
 function processor.func(key_event, env)
     local context = env.engine.context
 
-    -- print('keycode:' .. key_event.keycode .. '   ctrl: ' .. tostring(key_event:ctrl()) .. '   release: ' ..
-    --           tostring(key_event:release()))
+    -- print('keycode: ' .. key_event.keycode .. '   key: ' .. key_event:repr())
+    -- print('key_event:release(): ' .. tostring(key_event:release()))
+    -- print('key_event:ctrl(): ' .. tostring(key_event:ctrl()))
     -- print('key_event:' .. key_event:repr() .. '   latest_text: ' .. context.commit_history:latest_text())
     -- print('commit_history: ' .. context.commit_history:repr())
+    -- print('context:get_commit_text(): ' .. context:get_commit_text() .. '    input:  ' .. context.input)
 
     local mode = context:get_option("ascii_mode")
+
+    --Control+space 不一定能捕获到，似乎要看程序是否有这个快捷键，只能捕获 Control+Release+space
+    if key_event:ctrl() then
+    -- print('keycode2: ' .. key_event.keycode .. '   key: ' .. key_event:repr())
+        if not key_event:release() and context:is_composing() then
+            processor.cacheInput = context.input
+            -- print('processor.cacheInput: ' .. processor.cacheInput .. '    input:  ' .. context.input)
+        end
+        if key_event:repr() == "Control+Release+space" and mode then
+            -- print('processor.cacheInput2: ' .. processor.cacheInput .. '    input:  ' .. context.input)
+            env.engine:commit_text(processor.cacheInput)
+            processor.cacheInput=""
+        end
+    end
 
     if mode then
         return 2
@@ -76,13 +93,13 @@ function processor.func(key_event, env)
             context:clear()
             return 1
         end
-    -- elseif (key_event.keycode == 58) then   -- 冒号特殊处理
-    --     -- print(string.format("%s %s", context:get_commit_text(), contains_chinese(context:get_commit_text())))
-    --     if containsChinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
-    --         env.engine:commit_text(context:get_commit_text() .. "：")
-    --         context:clear()
-    --         return 1
-    --     end
+        -- elseif (key_event.keycode == 58) then   -- 冒号特殊处理
+        --     -- print(string.format("%s %s", context:get_commit_text(), contains_chinese(context:get_commit_text())))
+        --     if containsChinese(context:get_commit_text()) or (key_event:ctrl() and not key_event:release()) then
+        --         env.engine:commit_text(context:get_commit_text() .. "：")
+        --         context:clear()
+        --         return 1
+        --     end
     end
     -- 实现")"的特殊处理
     if key_event:ctrl() and key_event:release() and key_event.keycode == 41 then
@@ -96,6 +113,7 @@ end
 
 function processor.init(env)
     env.memory = Memory(env.engine, env.engine.schema, "melt_eng")
+    processor.cacheInput = ""
     -- env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
     --     local commit = ctx.commit_history:back()
     --     if commit then
@@ -122,6 +140,7 @@ function processor.init(env)
     --     end
     -- end)
 end
+
 local function contains_english(str)
     -- 匹配中文字符的 Unicode 范围
     return string.match(str, "[a-zA-Z]") ~= nil
@@ -133,21 +152,21 @@ function processor.fini(env)
     collectgarbage()
 end
 
--- local function popTranslator(input, seg, env)
---     local context = env.engine.context
---     -- print('input:' .. input .. ' seg.status:' .. seg.status .. ' seg.start:' .. seg.start .. ' seg._end:' .. seg._end ..
---     --   ' seg.length:' .. seg.length .. ' seg.selected_index:' .. seg.selected_index)
---     --  if not seg.has_tag('histroy') then
---     --      return
---     --  end
---     -- print(context.commit_history:repr())
---     -- print('commit_history: ' .. context.commit_history:latest_text())
---     if (input == "date") then
---         --- Candidate(type, start, end, text, comment)
---         yield(Candidate("date", seg.start, seg._end, os.date("%Y年%m月%d日"), " 日期"))
---     end
+local function popTranslator(input, seg, env)
+    local context = env.engine.context
+    print('input:' .. input .. ' seg.status:' .. seg.status .. ' seg.start:' .. seg.start .. ' seg._end:' .. seg._end ..
+      ' seg.length:' .. seg.length .. ' seg.selected_index:' .. seg.selected_index)
+    --  if not seg.has_tag('histroy') then
+    --      return
+    --  end
+    -- print(context.commit_history:repr())
+    -- print('commit_history: ' .. context.commit_history:latest_text())
+    -- if (input == "date") then
+    --     --- Candidate(type, start, end, text, comment)
+    --     yield(Candidate("date", seg.start, seg._end, os.date("%Y年%m月%d日"), " 日期"))
+    -- end
 
--- end
+end
 
 local function popFilter(translation, env)
     local normal_cands = {}
@@ -203,10 +222,10 @@ local function print_table_simple(t)
 end
 
 return {
-    processor = processor
-    -- translator = {
-    --     func = popTranslator
-    -- },
+    processor = processor,
+    translator = {
+        func = popTranslator
+    },
     -- filter = {
     --     func = popFilter
     -- }
