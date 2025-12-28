@@ -2,12 +2,10 @@ customization:
   distribution_code_name: Weasel
   distribution_version: 0.16.3
   generator: "Rime::SwitcherSettings"
-  modified_time: "Tue Apr 22 16:01:04 2025"
+  modified_time: "Tue Jun 24 21:53:23 2025"
   rime_version: 1.13.1
 patch:
   schema_list:
     - {schema: rime_ice}
-    - {schema: stroke}
-    - {schema: radical_pinyin}
   "switcher/hotkeys":
-    - Control+F4
+    - "Control+F4"

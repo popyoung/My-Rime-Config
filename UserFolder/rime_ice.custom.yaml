@@ -21,7 +21,7 @@ patch:
   melt_eng/enable_user_dict: true
 
   # "radical_reverse_lookup/dictionary": zdict
-  # punctuator/half_shape/:: ":"
+  # punctuator/half_shape/:: [ '：', '::' ]
   punctuator/half_shape/[: "["
   punctuator/half_shape/]: "]"
   punctuator/half_shape/': "'"

@@ -61,8 +61,12 @@ function processor.func(key_event, env)
         if key_event:repr() == "Control+Release+space" and mode then
             -- print('processor.cacheInput2: ' .. processor.cacheInput .. '    input:  ' .. context.input)
             env.engine:commit_text(processor.cacheInput)
-            processor.cacheInput=""
+            -- processor.cacheInput=""
         end
+    end
+    
+    if not context:is_composing() then
+        processor.cacheInput=""
     end
 
     if mode then
