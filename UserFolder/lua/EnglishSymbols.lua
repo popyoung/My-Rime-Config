@@ -118,31 +118,6 @@ end
 function processor.init(env)
     env.memory = Memory(env.engine, env.engine.schema, "melt_eng")
     processor.cacheInput = ""
-    -- env.notifier = env.engine.context.commit_notifier:connect(function(ctx)
-    --     local commit = ctx.commit_history:back()
-    --     if commit then
-    --         if commit.type:sub(1, 6) == "cloud:" then
-    --             local code = commit.type:sub(7)
-    --             local entry = DictEntry()
-    --             entry.text = commit.text
-
-    --             if (contains_english(commit.text)) then
-    --                 entry.custom_code = string.lower(string.gsub(code, " ", "")) .. " "
-    --                 env.memory2:start_session()
-    --                 local r = env.memory2:update_userdict(entry, 1, "")
-    --                 env.memory2:finish_session()
-    --                 -- log.error(string.format("添加用户词典2：%s, %s, %q", code, commit.text, r))
-    --                 -- log.error(commit.type .. " " .. commit.text .. " " .. entry.custom_code)
-    --             else
-    --                 entry.custom_code = code .. " "
-    --                 env.memory:start_session()
-    --                 local r = env.memory:update_userdict(entry, 1, "")
-    --                 env.memory:finish_session()
-    --                 -- log.error(string.format("添加用户词典：%s, %s, %q", code, commit.text, r))
-    --             end
-    --         end
-    --     end
-    -- end)
 end
 
 local function contains_english(str)
