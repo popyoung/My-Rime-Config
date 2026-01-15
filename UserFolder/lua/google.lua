@@ -1,4 +1,9 @@
 local json = require("json")
+
+-- 获取当前 Lua 文件所在的目录路径
+local luaDir = GetCurrentLuaFilePath()
+
+package.cpath = package.cpath .. ";" .. luaDir .. "?.dll"
 local http = require("simplehttp")
 http.TIMEOUT = 1.5
 
@@ -9,6 +14,7 @@ end
 
 local function translator(input, seg)
     local url = make_url(input, 5)
+    -- log.error('url:'..url)
     local reply = http.request(url)
     local _, j = pcall(json.decode, reply)
     if j[1] == 'SUCCESS' and j[2] and j[2][1] then
