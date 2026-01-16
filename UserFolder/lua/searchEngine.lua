@@ -145,7 +145,8 @@ local function translator(input, seg)
     
     -- 生成候选词
     for _, value in ipairs(shortest_suggestions) do
-        local c = Candidate("cloud:"..input, seg.start, seg._end, value, "☁️")
+        local c = Candidate("cloud:" .. env.script_text, seg.start, seg._end, v, "☁️")
+        -- local c = Candidate("cloud:"..input, seg.start, seg._end, value, "☁️")
         c.quality = 2
         c.preedit = input
         yield(c)

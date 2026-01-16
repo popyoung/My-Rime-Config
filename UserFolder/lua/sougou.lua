@@ -1,5 +1,3 @@
-
-
 -- 获取当前 Lua 文件所在的目录路径
 local luaDir = GetCurrentLuaFilePath()
 
@@ -111,7 +109,7 @@ local function get_cloud_words(keys)
     return parse_result(resp)
 end
 
-local function translator(input, seg)
+local function translator(input, seg, env)
     local list = get_cloud_words(input)
     local yielded_candidates = 0
     local max_candidates = 5
@@ -119,8 +117,7 @@ local function translator(input, seg)
         if yielded_candidates >= max_candidates then
             break
         end
-
-        local c = Candidate("cloud:"..input, seg.start, seg._end, v, "☁️")
+        local c = Candidate("cloud:" .. env.script_text, seg.start, seg._end, v, "☁️")
         c.quality = 2
         c.preedit = input
         yield(c)

@@ -1,6 +1,6 @@
 local function make(trig_key, trig_translator)
     local flag = false
-
+    local script_text = ""
     local function processor(key, env)
         local kAccepted = 1
         local kNoop = 2
@@ -10,6 +10,7 @@ local function make(trig_key, trig_translator)
         if key:repr() == trig_key then
             if context:is_composing() then
                 flag = true
+                script_text = env.engine.context:get_script_text()
                 context:refresh_non_confirmed_composition()
                 return kAccepted
             end
@@ -25,6 +26,7 @@ local function make(trig_key, trig_translator)
     function translator.func(input, seg, env)
         if flag then
             flag = false
+            env.script_text = script_text
             trig_translator(input, seg, env)
         end
     end
@@ -48,6 +50,7 @@ local function make(trig_key, trig_translator)
                         -- log.error(string.format("添加用户词典2：%s, %s, %q", code, commit.text, r))
                         -- log.error(commit.type .. " " .. commit.text .. " " .. entry.custom_code)
                     else
+                        -- 必须是带空格的拼音
                         entry.custom_code = code .. " "
                         env.memory:start_session()
                         local r = env.memory:update_userdict(entry, 1, "")
@@ -58,10 +61,12 @@ local function make(trig_key, trig_translator)
             end
         end)
     end
+
     function contains_english(str)
         -- 匹配中文字符的 Unicode 范围
         return string.match(str, "[a-zA-Z]") ~= nil
     end
+
     function translator.fini(env)
         env.notifier:disconnect()
         env.memory:disconnect()

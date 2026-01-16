@@ -16,20 +16,14 @@ patch:
     - lua_filter@*single_char_mode*filter
   engine/filters/@before 0: lua_filter@*is_in_user_dict # 用户词典的词加上一个*
 
-  # cloud_pinyin:
-  #   # 可选，设置反查词库，如果不指定，则不反查，也不会自动加入词库
-  #   reverse_db: rime_ice
-  #   # 可选，设置想要使用的搜索引擎，默认为 baidu
-  #   # 支持的搜索引擎：baidu、bilibili、bing、taobao
-  #   providers:
-  #     - baidu
-  #     - bilibili
-
+  # 调试自造词可以用这个，这样看词库方便点，直接看txt文件
+  # translators/@before 1: table_translator@user_cn
   # translator/user_dict: cn_dicts/user_cn
-  # translator/db_class: tabledb # 不清楚动态词典和静态词典的区别。一开始以为静态用的是数据库，动态用的是txt，才用的动态，好像并不是这样。
+  # translator/db_class: tabledb # txt格式
   # translator/enable_user_dict: true
+
   melt_eng/user_dict: en_dicts/user_en # 指定词库文件
-  melt_eng/db_class: tabledb # 不清楚动态词典和静态词典的区别。一开始以为静态用的是数据库，动态用的是txt，才用的动态，好像并不是这样。
+  melt_eng/db_class: tabledb # txt格式
   melt_eng/enable_user_dict: true
 
   # "radical_reverse_lookup/dictionary": zdict

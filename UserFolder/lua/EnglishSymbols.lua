@@ -132,6 +132,7 @@ function processor.fini(env)
 end
 
 local function popTranslator(input, seg, env)
+    print("popTranslator: '" .. input .. "'")
     local context = env.engine.context
     print('input:' .. input .. ' seg.status:' .. seg.status .. ' seg.start:' .. seg.start .. ' seg._end:' .. seg._end ..
       ' seg.length:' .. seg.length .. ' seg.selected_index:' .. seg.selected_index)
