@@ -109,20 +109,86 @@ local function get_cloud_words(keys)
     return parse_result(resp)
 end
 
-local function translator(input, seg, env)
-    local list = get_cloud_words(input)
-    local yielded_candidates = 0
-    local max_candidates = 5
-    for i, v in ipairs(list) do
-        if yielded_candidates >= max_candidates then
-            break
-        end
-        local c = Candidate("cloud:" .. env.script_text, seg.start, seg._end, v, "☁️")
-        c.quality = 2
-        c.preedit = input
-        yield(c)
+-- 核心函数：枚举所有 en→eng/in→ing 的组合（修复版）
+local function enum_en_in_combinations(input)
+    if type(input) ~= "string" then
+        return {}
+    end
 
-        yielded_candidates = yielded_candidates + 1
+    -- 步骤1：拆分字符串为单词（按空格分割）
+    local words = {}
+    for word in input:gmatch("%S+") do -- %S+ 匹配非空单词（按空格分割）
+        table.insert(words, word)
+    end
+    if #words == 0 then
+        return { input }
+    end
+
+    -- 步骤2：为每个单词生成替换变体（原词 + 替换后的词）
+    local word_variants = {}    -- 存储每个单词的变体列表
+    for _, word in ipairs(words) do
+        local variants = { word } -- 先加入原词
+        -- 匹配单词末尾的 en → 生成 eng 变体
+        if word:sub(-2) == "en" then
+            local new_word = word:sub(1, -3) .. "eng"
+            table.insert(variants, new_word)
+        end
+        -- 匹配单词末尾的 in → 生成 ing 变体
+        if word:sub(-2) == "in" then
+            local new_word = word:sub(1, -3) .. "ing"
+            table.insert(variants, new_word)
+        end
+        table.insert(word_variants, variants)
+    end
+
+    -- 步骤3：递归组合所有单词的变体（核心：笛卡尔积）
+    local function combine(variants_list, idx, current)
+        local result = {}
+        current = current or {}
+        if idx > #variants_list then
+            -- 组合当前路径的单词为字符串
+            table.insert(result, table.concat(current, " "))
+            return result
+        end
+        -- 遍历当前单词的所有变体
+        for _, variant in ipairs(variants_list[idx]) do
+            table.insert(current, variant)
+            -- 递归组合下一个单词
+            local sub_result = combine(variants_list, idx + 1, current)
+            for _, s in ipairs(sub_result) do
+                table.insert(result, s)
+            end
+            table.remove(current) -- 回溯
+        end
+        return result
+    end
+
+    -- 生成所有组合并返回
+    local all_combinations = combine(word_variants, 1)
+    return all_combinations
+end
+
+local function translator(input, seg, env)
+    -- local list = get_cloud_words(input)
+    local map = {}
+    local script_text_list = enum_en_in_combinations(env.script_text)
+
+
+    for _, script_text in ipairs(script_text_list) do
+        local list = get_cloud_words(script_text:gsub("%s+", ""))
+        local yielded_candidates = 0
+        local max_candidates = 5
+        for _, v in ipairs(list) do
+            if yielded_candidates >= max_candidates then
+                break
+            end
+            local c = Candidate("cloud:" .. script_text, seg.start, seg._end, v, "☁️")
+            c.quality = 2
+            c.preedit = script_text:gsub("%s+", "")
+            yield(c)
+
+            yielded_candidates = yielded_candidates + 1
+        end
     end
 end
 
